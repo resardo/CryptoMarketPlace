@@ -1,0 +1,101 @@
+﻿
+@model List<FinancialDataDTO>
+@{
+    ViewData["Title"] = "Home Pag";
+}
+
+
+
+
+<table class="display responsive nowrap" width="100%" id="datatable">
+    <thead>
+        <tr>
+
+            <th> @Html.DisplayName("Symbol") </th>
+            <th> @Html.DisplayName("OpenPrice")</th>
+            <th> @Html.DisplayName("LastPrice")</th>
+            <th> @Html.DisplayName("PriceChange")</th>
+            <th> @Html.DisplayName("PriceChange%")</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var row in Model)
+        {
+            <tr>
+                <td>@row.symbol</td>
+                <td>@row.openPrice</td>
+                <td>@row.lastPrice</td>
+                <td>@row.priceChange</td>
+                <td>@row.priceChangePercent</td>
+            </tr>
+        }
+        </tbody>
+</table>
+
+   
+
+@section scripts{
+  <script src="~/lib/jquery/dist/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+  
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.10/signalr.min.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready( function () {
+        debugger
+       var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+
+            connection.on("DataChanged", function () {
+                location.reload();
+            });
+
+            connection.start().catch(function (err) {
+                return console.error(err.toString());
+            });
+        
+        
+    $('#datatable').DataTable(
+        {
+              responsive:true,
+              //search can by done only by first column
+                columnDefs: [
+            {
+                targets: [1],
+                searchable: false
+            },
+            {
+                targets: [2],
+                searchable: false
+            },
+            {
+                targets: [3],
+                searchable: false
+            },
+            {
+                targets: [4],
+                searchable: false
+            }
+
+        ],
+    //function that checks the last column value and changes the color based on value
+              fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                if (aData[4] > 0) {
+                    $('td', nRow).css('background-color', '#40ff00');
+                } else if (aData[4] < 0) {
+                    $('td', nRow).css('background-color', '	#ff5252');
+                }
+                else {
+                     $('td', nRow).css('background-color', 'FFF');
+                }
+                }
+           
+        });
+
+
+} );
+</script>
+
+}
