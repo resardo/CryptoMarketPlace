@@ -22,6 +22,7 @@ namespace CryptoMarketPlace.Controllers
             _hangfireService = hangfireService;
             _logger = logger;
         }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -31,7 +32,7 @@ namespace CryptoMarketPlace.Controllers
         
         }
 
-        public async Task<List<FinancialDataDTO>> FetchData()
+        public async Task<IActionResult> FetchData()
         {
             // Call the ConfigureHangfire method to set up Hangfire and wait for it to complete
             await _hangfireService.ConfigureHangfire();
@@ -40,7 +41,7 @@ namespace CryptoMarketPlace.Controllers
             var result = _hangfireService.GetLastResult();
 
             // Return the result
-            return result;
+            return Json(result);
         }
 
         [HttpGet]
