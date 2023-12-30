@@ -40,6 +40,7 @@ namespace CryptoMarketPlace.Helper
 
         public void YourRecurringJobMethod()
         {
+            Console.WriteLine("job str");
             using (var client = new HttpClient())
             {
                 //method that is needed for api connection
@@ -63,6 +64,7 @@ namespace CryptoMarketPlace.Helper
                 }
                 NotifyClientsAboutDataChange();
             }
+            Console.WriteLine("job end");
         }
 
         public List<FinancialDataDTO> GetLastResult()

@@ -27,7 +27,7 @@ namespace CryptoMarketPlace.Controllers
         public async Task<IActionResult> Index()
         {
             
-            var result = FetchData().Result;
+            var result = await FetchData();
             return View(result);
         
         }
@@ -44,43 +44,7 @@ namespace CryptoMarketPlace.Controllers
             return Json(result);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Fetch()
-        {
-           try
-            {
-                using (var client = new HttpClient())
-                {
-                    //method that is needed for api connection
-                    apiHelper.loadHttpClientSettings(client);
-                   
-                    //get response in HttpResponseMessage form
-                    var response = client.GetAsync(url).GetAwaiter().GetResult();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        //in case response is successful this code is excecuted
-                        var JsonResult = response.Content.ReadAsStringAsync().Result;
-                        //coverts json result to FinancialDTO model
-                        users = (List<FinancialDataDTO>)JsonConvert.DeserializeObject<List<FinancialDataDTO>>(JsonResult);
-                    }
-                    else
-                    {
-                        // if there is a error in response the status code error will be displayed
-                        throw new Exception((int)response.StatusCode + "-" + response.StatusCode.ToString());
-                    }
-                    
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
-            //returns data 
-
-            return RedirectToAction("Index");
-        }
-
+       
         public IActionResult Privacy()
         {
             return View();

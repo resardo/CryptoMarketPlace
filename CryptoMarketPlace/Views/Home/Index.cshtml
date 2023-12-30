@@ -41,7 +41,7 @@
 <script type="text/javascript">
 
     $(document).ready( function () {
-        
+         var currentPage = 1;
          var dt = $('#datatable').DataTable(
               {
                     responsive: true,
@@ -99,7 +99,8 @@
         getAllData();
 
         var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
-            connection.on("DataChanged", function () {
+        connection.on("DataChanged", function () {
+                currentPage = dt.page.info().page + 1;
                 getAllData();
             });
 
@@ -116,7 +117,8 @@
                       success: function(data) {
                          dt.clear();
                          dt.rows.add(data);
-                         dt.draw();
+                          dt.draw();
+                          dt.page(currentPage - 1).draw('page');
                       }
                   });
             }

@@ -18,7 +18,7 @@ builder.Services.AddHangfire(configuration => configuration
     .UseSimpleAssemblyNameTypeSerializer()
     .UseRecommendedSerializerSettings()
     .UseMemoryStorage());
-
+builder.Services.AddHangfireServer();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 builder.Services.AddSingleton<IUrlHelperFactory, UrlHelperFactory>();
@@ -59,11 +59,11 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.UseHangfireServer();
+//app.UseHangfireServer();
 
 app.UseHangfireDashboard();
 
 
-RecurringJob.AddOrUpdate("my-recurring-job", () => hangfireService.YourRecurringJobMethod(), "*/5 * * * * *");
+RecurringJob.AddOrUpdate("my-recurring-job", () => hangfireService.YourRecurringJobMethod(), "*/3 * * * * *");
 
 app.Run();
