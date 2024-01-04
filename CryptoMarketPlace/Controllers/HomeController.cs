@@ -26,10 +26,9 @@ namespace CryptoMarketPlace.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            
             var result = await FetchData();
             return View(result);
-        
+       
         }
 
         public async Task<IActionResult> FetchData()
@@ -37,10 +36,8 @@ namespace CryptoMarketPlace.Controllers
             // Call the ConfigureHangfire method to set up Hangfire and wait for it to complete
             await _hangfireService.ConfigureHangfire();
 
-            // Now you can retrieve the data from the completed job
             var result = _hangfireService.GetLastResult();
 
-            // Return the result
             return Json(result);
         }
 

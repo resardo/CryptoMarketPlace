@@ -1,9 +1,4 @@
-﻿
-
-
-
-
-<table class="display responsive nowrap" width="100%" id="datatable">
+﻿<table class="display responsive nowrap" width="100%" id="datatable">
     <thead>
         <tr>
 
@@ -15,22 +10,10 @@
 
         </tr>
         </thead>
-     @*   <tbody>
-        @foreach (var row in Model)
-        {
-            <tr>
-                <td>@row.symbol</td>
-                <td>@row.openPrice</td>
-                <td>@row.lastPrice</td>
-                <td>@row.priceChange</td>
-                <td>@row.priceChangePercent</td>
-            </tr>
-        }
-        </tbody>*@
+    
 </table>
 
    
-
 @section scripts{
   <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
@@ -39,90 +22,86 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.10/signalr.min.js"></script>
 
 <script type="text/javascript">
-
     $(document).ready( function () {
-         var currentPage = 1;
-         var dt = $('#datatable').DataTable(
-              {
-                    responsive: true,
-                    columns : [ {
-                            "data" : "symbol"
-                        }, {
-                            "data" : "openPrice"
-                        }, {
-                            "data" : "lastPrice"
-                        }, {
-                            "data" : "priceChange"
-                        }, 
-                        {
-                            "data" : "priceChangePercent"
-                        }
-                      
-                    ],
-                    //search can by done only by first column
-                    columnDefs: [
-                        {
-                            targets: [1],
-                            searchable: false
-                        },
-                        {
-                            targets: [2],
-                            searchable: false
-                        },
-                        {
-                            targets: [3],
-                            searchable: false
-                        },
-                        {
-                            targets: [4],
-                            searchable: false
-                        }
-
-                    ],
-                    //function that checks the last column value and changes the color based on value
-                    fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                        var lastColumnValue = aData["priceChangePercent"];
-                        debugger
-                        if (lastColumnValue > 0) {
-                            $('td', nRow).css('background-color', '#40ff00');
-                        } 
-                        else if (lastColumnValue < 0) {
-                            $('td', nRow).css('background-color', '	#ff5252');
-                        }
-                        else {
-                            $('td', nRow).css('background-color', 'FFF');
-                        }
-                    }
-
-                });
+        var currentPage = 1;
+        var dt = $('#datatable').DataTable(
+        {
+            responsive: true,
+            columns : [ 
+                {
+                "data" : "symbol"
+                }, {
+                "data" : "openPrice"
+                }, {
+                "data" : "lastPrice"
+                }, {
+                "data" : "priceChange"
+                }, 
+                {
+                "data" : "priceChangePercent"
+                }
+            ],
+            //search can by done only by first column
+            columnDefs: [
+                {
+                targets: [1],
+                searchable: false
+                },
+                {
+                targets: [2],
+                searchable: false
+                },
+                {
+                targets: [3],
+                searchable: false
+                },
+                {
+                targets: [4],
+                searchable: false
+                }
+            ],
+            //function that checks the last column value and changes the color based on value
+            fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                var lastColumnValue = aData["priceChangePercent"];
+                if (lastColumnValue > 0) {
+                    $('td', nRow).css('background-color', '#40ff00');
+                } 
+                else if (lastColumnValue < 0) {
+                    $('td', nRow).css('background-color', '	#ff5252');
+                }
+                else {
+                    $('td', nRow).css('background-color', 'FFF');
+                }
+            }
+        });
 
         getAllData();
 
         var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
         connection.on("DataChanged", function () {
-                currentPage = dt.page.info().page + 1;
-                getAllData();
-            });
+            currentPage = dt.page.info().page + 1;
+            getAllData();
+        });
 
-            connection.start().catch(function (err) {
-                return console.error(err.toString());
-            });
+        connection.start().catch(function (err) {
+            return console.error(err.toString());
+        });
 
         function getAllData() {
             $.ajax({
-                      url: "/Home/FetchData",
-                      type: 'GET',
-                      dataType: 'json',
-                      dataSrc: '',
-                      success: function(data) {
-                         dt.clear();
-                         dt.rows.add(data);
-                          dt.draw();
-                          dt.page(currentPage - 1).draw('page');
-                      }
-                  });
-            }
-        } 
+                url: "/Home/FetchData",
+                type: 'GET',
+                dataType: 'json',
+                dataSrc: '',
+                success: function(data) {
+                dt.clear();
+                dt.rows.add(data);
+                dt.draw();
+                dt.page(currentPage - 1).draw('page');
+                }
+            });
+        }
+    } 
     );
 </script>
 
